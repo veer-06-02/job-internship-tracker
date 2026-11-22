@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Job & Internship Application Tracker</title>
+  <link rel="stylesheet" href="jt.css">
+</head>
+<body>
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand"><span class="brand-mark">JT</span> JobTracker</div>
+    <nav class="nav">
+      <button class="nav-item active" data-page="dashboard"><span class="ico">▦</span> Dashboard</button>
+      <button class="nav-item" data-page="applications"><span class="ico">☰</span> My Applications</button>
+      <button class="nav-item" id="navAdd"><span class="ico">＋</span> Add Application</button>
+      <button class="nav-item" data-page="settings"><span class="ico">⚙</span> Settings</button>
+    </nav>
+    <p class="side-foot">Track every application in one place.</p>
+  </aside>
+  <div class="overlay" id="overlay"></div>
+
+  <!-- ===== MAIN AREA ===== -->
+  <div class="main">
+    <!-- Top navigation bar -->
+    <header class="topbar">
+      <button class="icon-btn menu-btn" id="menuBtn" aria-label="Open menu">☰</button>
+      <h1 id="pageTitle">Dashboard</h1>
+      <div class="top-actions">
+        <button class="btn primary" id="topAddBtn">+ Add Application</button>
+      </div>
+    </header>
+
+    <main class="content">
+
+      <!-- ===== DASHBOARD PAGE ===== -->
+      <section class="page active" id="page-dashboard">
+        <div class="stats" id="stats"></div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-head">
+              <h2>Recent applications</h2>
+              <button class="link-btn" id="viewAllBtn">View all</button>
+            </div>
+            <ul class="recent" id="recentList"></ul>
+          </div>
+          <div class="card">
+            <div class="card-head"><h2>Status overview</h2></div>
+            <div id="overview"></div>
+            <button class="btn primary block" id="quickAddBtn">Quick add application</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== APPLICATIONS PAGE ===== -->
+      <section class="page" id="page-applications">
+        <div class="card">
+          <div class="toolbar">
+            <input type="search" id="searchInput" placeholder="Search company or job role…">
+            <select id="statusFilter">
+              <option value="">All statuses</option>
+              <option>Applied</option><option>Interview</option><option>Selected</option><option>Rejected</option>
+            </select>
+            <select id="typeFilter">
+              <option value="">All job types</option>
+              <option>Internship</option><option>Full-time</option><option>Part-time</option>
+            </select>
+            <select id="sortSelect">
+              <option value="desc">Newest first</option>
+              <option value="asc">Oldest first</option>
+            </select>
+            <button class="btn ghost" id="clearFilters">Clear filters</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Company</th><th>Job role</th><th>Applied</th><th>Type</th><th>Status</th><th>Actions</th></tr>
+              </thead>
+              <tbody id="tableBody"></tbody>
+            </table>
+          </div>
+          <div class="empty" id="emptyMsg" hidden>
+            <p>No applications found.</p>
+            <small>Try a different search or filter, or add a new application.</small>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== SETTINGS PAGE ===== -->
+      <section class="page" id="page-settings">
+        <div class="card settings">
+          <h2>Data settings</h2>
+          <p class="muted">Your applications are stored in this browser using LocalStorage.</p>
+          <div class="setting-row">
+            <div><strong>Export data</strong><p class="muted">Download all applications as a JSON file.</p></div>
+            <button class="btn primary" id="exportBtn">Export JSON</button>
+          </div>
+          <div class="setting-row">
+            <div><strong>Load sample data</strong><p class="muted">Replace everything with the demo applications.</p></div>
+            <button class="btn ghost" id="resetBtn">Load samples</button>
+          </div>
+          <div class="setting-row">
+            <div><strong>Clear all data</strong><p class="muted">Permanently delete every application.</p></div>
+            <button class="btn danger" id="clearBtn">Delete all</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ===== ADD / EDIT MODAL ===== -->
+  <div class="modal" id="formModal" hidden>
+    <div class="modal-box">
+      <div class="modal-head">
+        <h2 id="formTitle">Add application</h2>
+        <button class="icon-btn" data-close aria-label="Close">✕</button>
+      </div>
+      <form id="appForm" novalidate>
+        <input type="hidden" id="appId">
+        <div class="form-grid">
+          <label>Company name *
+            <input type="text" id="company" placeholder="e.g. Google">
+            <span class="err" data-for="company"></span>
+          </label>
+          <label>Job role *
+            <input type="text" id="role" placeholder="e.g. Frontend Intern">
+            <span class="err" data-for="role"></span>
+          </label>
+          <label>Application date *
+            <input type="date" id="date">
+            <span class="err" data-for="date"></span>
+          </label>
+          <label>Job type *
+            <select id="type">
+              <option value="">Select type</option>
+              <option>Internship</option><option>Full-time</option><option>Part-time</option>
+            </select>
+            <span class="err" data-for="type"></span>
+          </label>
+          <label>Company website or job link
+            <input type="text" id="link" placeholder="https://company.com/careers">
+            <span class="err" data-for="link"></span>
+          </label>
+          <label>Application status *
+            <select id="status">
+              <option value="">Select status</option>
+              <option>Applied</option><option>Interview</option><option>Selected</option><option>Rejected</option>
+            </select>
+            <span class="err" data-for="status"></span>
+          </label>
+          <label class="full">Notes
+            <textarea id="notes" rows="3" placeholder="Recruiter name, interview date, next steps…"></textarea>
+          </label>
+        </div>
+        <div class="modal-foot">
+          <button type="button" class="btn ghost" data-close>Cancel</button>
+          <button type="submit" class="btn primary" id="saveBtn">Save application</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== DETAILS MODAL ===== -->
+  <div class="modal" id="detailModal" hidden>
+    <div class="modal-box">
+      <div class="modal-head">
+        <h2>Application details</h2>
+        <button class="icon-btn" data-close aria-label="Close">✕</button>
+      </div>
+      <div id="detailBody"></div>
+      <div class="modal-foot">
+        <button class="btn ghost" data-close>Close</button>
+        <button class="btn primary" id="detailEdit">Edit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast notification -->
+  <div class="toast" id="toast" role="status"></div>
+
+  <script src="jt.js"></script>
+</body>
+</html>
